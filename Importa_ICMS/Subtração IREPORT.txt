@@ -1,0 +1,46 @@
+s3mf!samb4
+
+27 - IREPORT:
+
+			
+	
+SOMA DE BIGDECIMAL:
+		
+new BigDecimal(  ($V{soma1B}.doubleValue()) +($V{soma2B}.doubleValue()))
+	
+
+MÉDIA:
+		new BigDecimal( ($V{soma1B + soma2B}.doubleValue()) / ($V{2}.doubleValue()))
+		
+	
+
+CRIANDO UM BIGDECIMAL:
+		new BigDecimal(36)
+	
+	
+
+CALCULOS ARITIMETICOS:
+	
+		
+new BigDecimal(	(
+ (($V{vnota1}.doubleValue())+($V{vnota2}.doubleValue())+($V{vnota3}.doubleValue())+($V{vnota4}.doubleValue()))/($V{2}.doubleValue())
+					)
+					+
+					(  
+					 (($V{vnota5}.doubleValue())+($V{vnota6}.doubleValue())+($V{vnota7}.doubleValue())+($V{vnota8}.doubleValue()))/ ($V{2}.doubleValue()) 
+					)
+				  )
+				  
+	
+
+CONDIÇÃO TERNARIA:
+		*EXEMPLO 1 :
+			
+$V{DIFERENCA}.toString().substring(0,1).equals("-") ? "<style forecolor='#FF0000'>" 
+			+ $V{DIFERENCA} + "</style>" : "<style forecolor='#0033FF'>" + $V{DIFERENCA} + "</style>"	
+		
+		
+* EXEMPLO 2 :
+			$F{STATUS} ="A" ?   'Aguard. Terceiros' :
+			$F{STATUS} ="C" ?   'Concluído' : 
+			$F{STATUS} ="E" ?    'Em andamendo' ....

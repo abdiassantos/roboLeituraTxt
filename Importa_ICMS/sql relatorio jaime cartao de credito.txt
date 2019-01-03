@@ -1,0 +1,150 @@
+select
+eco.codeco,
+eco.insmun as "Inscricao Municipal",
+eco.cpfcnpj as "CPF/CNPJ",
+case length(eco.cpfcnpj)
+      when 14 then siatthe.mascaracnpj(eco.cpfcnpj)
+      when 11 then siatthe.mascaracpf(eco.cpfcnpj)
+      else 'Erro'
+end as "CPF/CNPJ Formatado",
+eco.nomraz as "Razao Social",
+eco.nomfan as "Nome Fantasia",
+eco.tippes as "Tipo de Pessoa",
+eco.cnpjmat as "CNPJ Matriz",
+case length(eco.cnpjmat)
+      when 14 then siatthe.mascaracnpj(eco.cpfcnpj)
+      when 11 then siatthe.mascaracpf(eco.cpfcnpj)
+      when null then null
+      else null
+end as "CNPJ Matriz Formatado",
+eco.codnjr as "Codigo Natureza Juridica",
+njr.desnjr as "Natureza Juridica",
+case siatthe.recuperaSituacaoSiat(eco.codEco,'S','TIPSIT') 
+    when 'A' then 'Ativa'
+    when 'E' then 'Encerrada'
+    when 'S' then 'Suspensa'
+    else 'Não Mapeada'
+end as "Situacao SIAT",
+case eco.tipins 
+      when 'OM' then 'Outros Municipios'
+      when 'N' then 'Normal'
+      when 'UA' then 'Unidade Agregada'
+      when 'OF' then 'Oficio'
+      when 'UT' then 'Unidade Temporaria'
+end as "Tipo de Inscricao",
+to_char(eco.datcons,'dd/mm/yyyy') as "Data Abertura",
+--atv.numatv as CNAE,
+--atv.titulo as "Titulo Atividade",
+--ecoatv.tipatv as "Principal Atividade",
+--to_char(ecoatv.datini,'dd/mm/yyyy') as "Data Inicio Atividade",
+--to_char(ecoatv.datfim,'dd/mm/yyyy') as "Data Fim Atividade",
+--ecoatv.situac as "Situacao EcoAtv",
+--atv.situac as "Situacao Atividade",
+/*
+case 
+      when atv.numatv is not null and ecoatv.datfim is null or ecoatv.datfim>sysdate and ecoatv.situac='A' and atv.situac='A' then 'Valida'
+      else 'Invalida'
+end as "Validade Atividade",
+*/
+--ecoatv.fiscal as "Atividade Fiscal",
+case ecoelo.tipimo
+    when 'R' then 'Residencial'
+    when 'C' then 'Comercial'
+    when 'M' then 'Misto'
+end as "Tipo Imovel",
+siatthe.RecuperaDsfEnum(ecoelo.tiplog, 'D', 'RS') as "Tipo Logradouro",
+ecoelo.nomlog as "Logradouro",
+ecoelo.numero as "Numero",
+ecoelo.comple as "Complemento",
+ecoelo.nombai as "Bairro",
+ecoelo.cep as "CEP",
+ecoelo.arefunati as "Area Func Atividade",
+/*
+ecoeqditm.situac as "Situacao Item Enquadramento",
+eqditm.descom,
+eqditm.numeqditm as "Item Enquadramento",
+to_char(ecoeqditm.datini,'dd/mm/yyyy') as "Inicio Enquadramento",
+to_char(ecoeqditm.datfim,'dd/mm/yyyy') as "Fim Enquadramento",
+*/
+
+/*
+case 
+      when ecoeqditm.datfim is null or ecoeqditm.datfim>sysdate and ecoeqditm.situac='A' then 'Valido'
+      else 'Invalido'
+end as "Validade Item Enquadramento" 
+*/
+--ocp.numocp as "Ocupacao",
+--ocp.titulo as "Titulo Ocupacao",
+--ecoocp.tipocp as "Ocupacao Principal",
+--to_char(ecoocp.datini,'dd/mm/yyyy') as "Data Inicio Ocupacao",
+--to_char(ecoocp.datfim,'dd/mm/yyyy') as "Data Fim Ocupacao",
+--lsv.numlsv as "SubItem",
+--lsv.desres as "Descricao Item",
+--lsv.codlsvsup as "Item",
+case eco.tipest 
+    when 'M' then 'Sede/Matriz'
+    when 'F' then 'Filial'
+    else 'Não Mapeado'
+end as "Tipo Estabelecimento",
+case
+    when (select count(*) from 
+    (select aaa.* from siatthe.tblecoatv aaa where aaa.situac='A' and (aaa.datfim is null or aaa.datfim>sysdate)) ecoatv
+left join 
+(select bbb.* from siatthe.tblatv bbb where bbb.situac='A' and bbb.ultniv='S') atv on atv.codatv=ecoatv.codatv
+left join 
+(select max(fff.codatvcfg) as codatvcfg,fff.codatv from siatthe.tblatvcfg fff group by fff.codatv) maxatvcfg on maxatvcfg.codatv=atv.codatv
+left join siatthe.tblatvcfg atvcfg on atvcfg.codatvcfg=maxatvcfg.codatvcfg
+left join siatthe.tbllsv lsv on lsv.codlsv=atvcfg.codlsv
+where ecoatv.codeco=eco.codeco and lsv.numlsv is not null)>0
+and 
+    (select count(*) from 
+    (select aaa.* from siatthe.tblecoatv aaa where aaa.situac='A' and (aaa.datfim is null or aaa.datfim>sysdate)) ecoatv
+left join 
+(select bbb.* from siatthe.tblatv bbb where bbb.situac='A' and bbb.ultniv='S') atv on atv.codatv=ecoatv.codatv
+left join 
+(select max(fff.codatvcfg) as codatvcfg,fff.codatv from siatthe.tblatvcfg fff group by fff.codatv) maxatvcfg on maxatvcfg.codatv=atv.codatv
+left join siatthe.tblatvcfg atvcfg on atvcfg.codatvcfg=maxatvcfg.codatvcfg
+left join siatthe.tbllsv lsv on lsv.codlsv=atvcfg.codlsv
+where ecoatv.codeco=eco.codeco and lsv.numlsv is null)=0
+    then 'Somente Prestador'
+
+when (select count(*) from 
+    (select aaa.* from siatthe.tblecoatv aaa where aaa.situac='A' and (aaa.datfim is null or aaa.datfim>sysdate)) ecoatv
+left join 
+(select bbb.* from siatthe.tblatv bbb where bbb.situac='A' and bbb.ultniv='S') atv on atv.codatv=ecoatv.codatv
+left join 
+(select max(fff.codatvcfg) as codatvcfg,fff.codatv from siatthe.tblatvcfg fff group by fff.codatv) maxatvcfg on maxatvcfg.codatv=atv.codatv
+left join siatthe.tblatvcfg atvcfg on atvcfg.codatvcfg=maxatvcfg.codatvcfg
+left join siatthe.tbllsv lsv on lsv.codlsv=atvcfg.codlsv
+where ecoatv.codeco=eco.codeco and lsv.numlsv is not null)>0
+and 
+    (select count(*) from 
+    (select aaa.* from siatthe.tblecoatv aaa where aaa.situac='A' and (aaa.datfim is null or aaa.datfim>sysdate)) ecoatv
+left join 
+(select bbb.* from siatthe.tblatv bbb where bbb.situac='A' and bbb.ultniv='S') atv on atv.codatv=ecoatv.codatv
+left join 
+(select max(fff.codatvcfg) as codatvcfg,fff.codatv from siatthe.tblatvcfg fff group by fff.codatv) maxatvcfg on maxatvcfg.codatv=atv.codatv
+left join siatthe.tblatvcfg atvcfg on atvcfg.codatvcfg=maxatvcfg.codatvcfg
+left join siatthe.tbllsv lsv on lsv.codlsv=atvcfg.codlsv
+where ecoatv.codeco=eco.codeco and lsv.numlsv is null)>0
+    then 'Empresa Mista'
+else 'Nao Prestador'
+end as "Tipo de Prestador",
+case 
+when (select count(*) from 
+(select ccc.* from siatthe.tblecoeqditm ccc where (ccc.datfim is null or ccc.datfim>sysdate) and ccc.situac='A') ecoeqditm 
+left join siatthe.tbleqditm eqditm on eqditm.codeqditm=ecoeqditm.codeqditm
+left join siatthe.tbleqd eqd on eqd.codeqd=eqditm.codeqd
+where ecoeqditm.codeco=eco.codeco and eqditm.codeqditm in (5,7,21))>0
+then 'Sim'
+else 'Nao'
+end as "Simples Nacional"
+
+from siatthe.tbleco eco 
+left join siatthe.tblnjr njr on njr.codnjr=eco.codnjr
+left join siatthe.tblecoelo ecoelo on ecoelo.codeco=eco.codeco
+--where eco.cpfcnpj='09588906000909';
+--where eco.cpfcnpj='41263799000277';
+--where eco.cpfcnpj='38685159334';
+where eco.tippes='PJ' and siatthe.recuperaSituacaoSiat(eco.codEco,'S','TIPSIT')='A'; 
+--and eco.cpfcnpj='11600541000410'; -- cacique pneus

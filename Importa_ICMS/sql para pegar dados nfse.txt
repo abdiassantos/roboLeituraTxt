@@ -1,0 +1,34 @@
+select 
+MES_COMPETENCIA,
+sum(valor_nota) as "total_valor_nota",
+sum(valor_servico) as "total_valor_servico",
+sum(VALOR_ISS) as "total_valor_iss",
+prest_cpf_cnpj,
+PREST_INSCRICAO_MUNICIPAL
+from nota_fiscal
+where 
+situacao_nf='1'
+group by 
+MES_COMPETENCIA,
+prest_cpf_cnpj,
+PREST_INSCRICAO_MUNICIPAL;
+
+----------------------
+
+select 
+MES_COMPETENCIA,
+SUBSTR(MES_COMPETENCIA,1,2) AS MES,
+SUBSTR(MES_COMPETENCIA,3,4) AS ANO,
+sum(valor_nota) as "total_valor_nota",
+sum(valor_servico) as "total_valor_servico",
+sum(VALOR_ISS) as "total_valor_iss",
+prest_cpf_cnpj,
+PREST_INSCRICAO_MUNICIPAL
+from nota_fiscal
+where 
+situacao_nf='1'
+group by 
+MES_COMPETENCIA,
+prest_cpf_cnpj,
+PREST_INSCRICAO_MUNICIPAL
+order by MES_COMPETENCIA, prest_cpf_cnpj 

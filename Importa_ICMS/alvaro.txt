@@ -1,0 +1,9 @@
+select eco.insmun, enq.situac, item.descom from siatthe.tbleco eco
+inner join siatthe.tblecoeqditm enq on enq.codeco = eco.codeco
+inner join siatthe.tbleqditm item on item.codeqditm = enq.codeqditm
+where eco.codeco=81663;
+
+-- AUTONOMO
+--ISS FIXO NIVEL SUPERIOR
+--ISS FIXO NIVEL MEDIO
+--ISS FIXO OUTROS NIVEIS

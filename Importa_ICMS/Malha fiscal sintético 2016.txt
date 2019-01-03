@@ -1,0 +1,19 @@
+		/*
+		String sql = "select ps.nomerazres as \"razaoSocial\", ps.cpf_cnpj as cnpj,insmun as \"inscricaoMunicipal\", "
+				+ " (select sum(rg.valor_operacao) from cartao_mensal rg where rg.pessoa_sistema_siat_id = ps.id and rg.mes ='"+mesInicio+"' and rg.ano = '"+anoInicio+"' ) as \"valorCartao\", "
+				+ " (select sum(issp.valor_total) from iss_pago issp where issp.pessoa_sistema_siat_id = ps.id and EXTRACT(MONTH FROM issp.data_vencimento) = '"+mesInicio+"' and EXTRACT(YEAR FROM issp.data_vencimento) = '"+anoInicio+"' )as \"valorISSPago\", "
+				+ " (select sum(nf.valor_notafiscal) from nota_fiscal nf where nf.pessoa_sistema_siat_id = ps.id and EXTRACT(MONTH FROM nf.data_emissao) = '"+mesInicio+"' and EXTRACT(YEAR FROM nf.data_emissao) = '"+anoInicio+"' )as \"valorVendas\", "
+				+ " (select sum(nf1.valor_servico) from nota_fiscal nf1 where nf1.pessoa_sistema_siat_id = ps.id and EXTRACT(MONTH FROM nf1.data_emissao) = '"+mesInicio+"' and EXTRACT(YEAR FROM nf1.data_emissao) = '"+anoInicio+"' )as \"valorServico\", "
+				+ " 0.00 as \"valorISSDeclarado\", 0.00 as \"valorDief\" "
+				+ " from pessoa_sistema_siat ps";
+		*/
+		String sql = "select ps.nomerazres as \"razaoSocial\", ps.cpf_cnpj as cnpj,insmun as \"inscricaoMunicipal\", "
+				+ " rg.valor_operacao as \"valorCartao\",  "
+				+ " issp.valor_total as \"valorISSPago\",nf.valor_notafiscal as \"valorVendas\", " 
+				+ " nf1.valor_servico as \"valorServico\",  0.00 as \"valorISSDeclarado\", 0.00 as \"valorDief\" " 
+				+ " from pessoa_sistema_siat ps "
+				+ " inner join cartao_mensal rg on rg.pessoa_sistema_siat_id = ps.id and rg.ano = '"+anoInicio+"' and rg.mes = '"+mesInicio+"' "
+				+ " left join agrupa_iss_pago issp on issp.pessoa_sistema_siat_id = ps.id and issp.ano = '"+anoInicio+"' and issp.mes = '"+mesInicio+"' "
+				+ " left join notafiscal_agrupada nf on nf.pessoa_sistema_siat_id = ps.id and nf.ano = '"+anoInicio+"' and nf.mes = '"+mesInicio+"' "
+				+ " left join notafiscal_agrupada nf1 on nf1.pessoa_sistema_siat_id = ps.id and nf1.ano = '"+anoInicio+"' and nf1.mes = '"+mesInicio+"' "
+				+ " order by ps.nomerazres ";
